@@ -42,17 +42,59 @@ const userController = {
     })
 },
 updateUser({ params, body }, res) {
-    User.findOneAndUpdate({_id: params.id}, body, { new: true, runValidators: true })
+    User.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
     .then(dbUserData =>  {
         if(!dbUserData) {
             res.status(404).json({ message: 'No user with this ID.' });
             return;
         }
         res.json(dbUserData);
-        )}
+    })
+    .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+    });
+},
+deleteUser({ params },res) {
+    User.findOneAndDelete({ _id: params.id }) 
+    .then(dbUserData => {
+        if(!dbUserData) {
+            res.status(404).json({ message: 'No user with this ID.' });
+            return;
+        }
+        res.json(dbUserData);
+    })
+    .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+    });
+},
+addFriend({ params }, res ) {
+    User.findOneAndUpdate({ _id: params.userId })
+    .then(dbUserData => {
+        if (!dbUserData) {
+            res.status(404).json({ message: 'No user with this ID.' });
+            return;
+        }
+        res.json(dbUserData);
+    })
+    .catch(err => {
+        res.sendStatus(500);
+    });
+},
+removeFriend({ params }, res ) {
+    User.findOneAndUpdate({ _id: params.userId })
+    .then(dbUserData => {
+        if (!dbUserData) {
+            res.status(404).json({ message: 'No user with this ID.' });
+            return;
+        }
+        res.json(dbUserData);
+    })
+    .catch(err => {
+        res.sendStatus(500);
+    });
+}
 }
 
-
-
-
-}
+module.exports = userController;

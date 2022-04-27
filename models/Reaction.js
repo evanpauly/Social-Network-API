@@ -25,4 +25,13 @@ ReactionSchema = new Schema({
 }
 );
 
+ReactionSchema.virtual('username').get(async function() {
+    let username = await User.findById(this.user)
+    .then(dbUserData => {
+        return dbUserData.username;
+    })
+    console.log(username);
+    return username || 'Username Not Found'
+});
+
 module.exports = ReactionSchema;

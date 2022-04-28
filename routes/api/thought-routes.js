@@ -26,7 +26,7 @@ router
 
 router
 .route('/:thoughtId/reactions')
-.route(addReaction);
+.post(addReaction);
 
 router
 .route('/:thoughtId/reactions/:reactionId')

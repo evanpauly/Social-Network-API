@@ -59,11 +59,9 @@ const ThoughtSchema = new Schema({
 }
 );
 
-ThoughtSchema.virtual('username').get(function () {
-    return this.reaction.length;
+ThoughtSchema.virtual('reactionCount').get(function () {
+    return this.reactions.length;
 });
-
-module.exports = ReactionSchema;
 
 const Thought = model('Thought', ThoughtSchema);
 

@@ -13,15 +13,12 @@ const thoughtController = {
         })
         .then(dbThoughtData => {
             if(!dbThoughtData) {
-                res.staus(404).json(err);
+                res.staus(404).json({ message: 'Error' });
                 return;
             }
             res.json(dbThoughtData);
         })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json(err);
-        })
+        .catch(err => res.json(err));
     },
 
     getAllThoughts(req, res) {

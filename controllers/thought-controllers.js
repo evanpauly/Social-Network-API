@@ -2,13 +2,14 @@ const User = require('../models/User');
 const Thought = require('../models/Thought')
 
 const thoughtController = {
-    createThought({ params, body }, res) {
-        const thought = new Thought(body)
-        thought.user = params.userId
-        Thought.create(thought)
-        .then(dbThoughtData => {
-            User.findOneAndUpdate({ _id: params.userId })
-            .then(() => { res.json(dbThoughtData)})
+    createThought({ body }, res) {
+        Thought.create(body)
+        .then(({ _id }) => {
+            return User.findOneAndUpdate(
+                { _id: body.userId },
+                { $push: { thoughts: _id }},
+                { new: true }
+            );
         })
         .catch(err => {
             console.log(err);
@@ -73,7 +74,12 @@ deleteThought({ params }, res) {
     });
 },
 addReaction({ params, body }, res ) {
-    Thought.findOneAndUpdate({ _id: params.thoughtId })
+    Thought.findOneAndUpdate({ _id: params.thoughtId },
+        { $push: { reactions: body }},
+        { new: true }
+        )
+        .populate({ path: 'reactions', select: '-__v' })
+        .select('-__v')
     .then(dbReactionData => {
         if (!dbReactionData) {
             res.status(404).json({ message: 'No thought with this ID.' });

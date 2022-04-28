@@ -11,6 +11,12 @@ const thoughtController = {
                 { new: true }
             );
         })
+        .then(dbThoughtData => {
+            if(!dbThoughtData) {
+                res.staus(404).json(err);
+                return;
+            }
+        })
         .catch(err => {
             console.log(err);
             res.status(500).json(err);
@@ -18,10 +24,10 @@ const thoughtController = {
     },
     getAllThoughts(req, res) {
         Thought.find({})
-        .select('-__v')
         .populate([
-            { path: 'user', select:['-__v', '-thoughts'] }
+            { path: 'reactions', select:'-__v' }
         ])
+        .select('-__v')
         .then(dbThoughtData => res.json(dbThoughtData))
         .catch(err => {
             console.log(err);
@@ -74,31 +80,32 @@ deleteThought({ params }, res) {
     });
 },
 addReaction({ params, body }, res ) {
-    Thought.findOneAndUpdate({ _id: params.thoughtId },
+    Thought.findOneAndUpdate(
+        { _id: params.thoughtId },
         { $push: { reactions: body }},
-        { new: true }
+        { new: true, runValidators: true }
         )
         .populate({ path: 'reactions', select: '-__v' })
         .select('-__v')
-    .then(dbReactionData => {
-        if (!dbReactionData) {
+    .then(dbThoughtData => {
+        if (!dbThoughtData) {
             res.status(404).json({ message: 'No thought with this ID.' });
             return;
         }
-        res.json(dbReactionData);
+        res.json(dbThoughtData);
     })
     .catch(err => {
         res.sendStatus(500).json(err);
     });
 },
 deleteReaction({ params }, res) {
-Thought.findOneAndUpdate({ _id: params.thoughtId })
-.then(dbReactionData => {
-    if(!dbReactionData){
+Thought.findOneAndUpdate({ _id: params.reactionId })
+.then(dbThoughtData => {
+    if(!dbThoughtData){
         res.status(404).json({ message: 'No thought with this ID.' });
         return;
     }
-    res.json(dbReactionData)
+    res.json(dbThoughtData)
 })
 .catch(err => {
     res.sendStatus(500).json(err)

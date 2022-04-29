@@ -79,7 +79,7 @@ addFriend({ params }, res ) {
         res.json(dbUserData);
     })
     .catch(err => {
-        res.sendStatus(500);
+        res.sendStatus(400).json(err);
     });
 },
 deleteFriend({ params }, res) {
@@ -96,9 +96,9 @@ deleteFriend({ params }, res) {
         res.json(dbUserData);
     })
     .catch(err => {
-        res.sendStatus(500);
+        res.sendStatus(400).json(err);
     });
 }
-}
+};
 
 module.exports = userController;
